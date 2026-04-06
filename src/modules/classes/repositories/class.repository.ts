@@ -19,13 +19,6 @@ export class ClassRepository implements IClassRepository {
     });
   }
 
-  async findAllWithRelations(): Promise<Class[]> {
-    return this.repository.find({
-      relations: ['homeroomTeacher', 'students'],
-      order: { name: 'ASC' },
-    });
-  }
-
   async findById(id: string): Promise<Class | null> {
     return this.repository.findOne({
       where: { id },

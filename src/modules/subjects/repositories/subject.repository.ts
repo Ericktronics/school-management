@@ -18,13 +18,6 @@ export class SubjectRepository implements ISubjectRepository {
     });
   }
 
-  async findAllWithTeacher(): Promise<Subject[]> {
-    return this.repository.find({
-      relations: ['teacher'],
-      order: { name: 'ASC' },
-    });
-  }
-
   async findById(id: string): Promise<Subject | null> {
     return this.repository.findOne({
       where: { id },

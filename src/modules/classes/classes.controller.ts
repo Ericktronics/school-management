@@ -20,15 +20,8 @@ import {
 import { ClassesService } from './classes.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
+import { EnrollStudentDto } from './dto/enroll-student.dto';
 import { Class } from './entities/class.entity';
-import { IsUUID } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-
-class EnrollStudentDto {
-  @ApiProperty({ example: 'uuid-of-student', description: 'Student ID to enroll' })
-  @IsUUID()
-  studentId: string;
-}
 
 @ApiTags('Classes')
 @Controller('classes')

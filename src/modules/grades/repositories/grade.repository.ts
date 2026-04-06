@@ -18,21 +18,7 @@ export class GradeRepository implements IGradeRepository {
     });
   }
 
-  async findAllWithRelations(): Promise<Grade[]> {
-    return this.repository.find({
-      relations: ['student', 'subject', 'class'],
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async findById(id: string): Promise<Grade | null> {
-    return this.repository.findOne({
-      where: { id },
-      relations: ['student', 'subject', 'class'],
-    });
-  }
-
-  async findByIdWithRelations(id: string): Promise<Grade | null> {
     return this.repository.findOne({
       where: { id },
       relations: ['student', 'subject', 'class'],

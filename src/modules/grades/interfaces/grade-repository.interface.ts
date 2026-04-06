@@ -10,7 +10,5 @@ export interface StudentGradeReport {
 }
 
 export interface IGradeRepository extends IBaseRepository<Grade> {
-  findAllWithRelations(): Promise<Grade[]>;
-  findByIdWithRelations(id: string): Promise<Grade | null>;
   findGradeReportByStudentId(studentId: string): Promise<StudentGradeReport[]>;
 }
