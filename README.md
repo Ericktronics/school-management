@@ -50,13 +50,71 @@ Each module follows the same layered structure:
 
 ## Data Model
 
-```
-teachers  ──<  subjects         (teacher_id, SET NULL on delete)
-teachers  ──<  classes          (homeroom_teacher_id, SET NULL on delete)
-classes   >──< students         (class_students join table)
-students  ──<  grades           (student_id, CASCADE on delete)
-subjects  ──<  grades           (subject_id, CASCADE on delete)
-classes   ──<  grades           (class_id, CASCADE on delete)
+```mermaid
+erDiagram
+    teachers {
+        uuid id PK
+        varchar first_name
+        varchar last_name
+        varchar email
+        varchar phone
+        varchar specialization
+        datetime created_at
+        datetime updated_at
+    }
+    subjects {
+        uuid id PK
+        varchar name
+        varchar code
+        text description
+        uuid teacher_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    students {
+        uuid id PK
+        varchar first_name
+        varchar last_name
+        varchar email
+        date date_of_birth
+        date enrollment_date
+        datetime created_at
+        datetime updated_at
+    }
+    classes {
+        uuid id PK
+        varchar name
+        varchar grade_level
+        varchar academic_year
+        uuid homeroom_teacher_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    class_students {
+        uuid class_id FK
+        uuid student_id FK
+    }
+    grades {
+        uuid id PK
+        decimal score
+        varchar letter_grade
+        enum semester
+        varchar academic_year
+        uuid student_id FK
+        uuid subject_id FK
+        uuid class_id FK
+        text remarks
+        datetime created_at
+        datetime updated_at
+    }
+
+    teachers ||--o{ subjects : "teaches (SET NULL)"
+    teachers ||--o{ classes : "homeroom (SET NULL)"
+    students ||--o{ grades : "has (CASCADE)"
+    subjects ||--o{ grades : "has (CASCADE)"
+    classes  ||--o{ grades : "has (CASCADE)"
+    classes  ||--o{ class_students : "has"
+    students ||--o{ class_students : "enrolled in"
 ```
 
 ## Getting Started
