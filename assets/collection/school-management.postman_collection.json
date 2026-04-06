@@ -1,0 +1,656 @@
+{
+  "info": {
+    "name": "School Management API",
+    "description": "Full CRUD collection for the School Management NestJS API.\n\nBase URL variable: `{{base_url}}` (default: http://localhost:3000/api)\n\nID variables are captured automatically from Create responses via test scripts:\n- `{{teacher_id}}`\n- `{{subject_id}}`\n- `{{student_id}}`\n- `{{class_id}}`\n- `{{grade_id}}`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",   "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "teacher_id", "value": "",                          "type": "string" },
+    { "key": "subject_id", "value": "",                          "type": "string" },
+    { "key": "student_id", "value": "",                          "type": "string" },
+    { "key": "class_id",   "value": "",                          "type": "string" },
+    { "key": "grade_id",   "value": "",                          "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Teachers",
+      "item": [
+        {
+          "name": "Get All Teachers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/teachers",
+              "host": ["{{base_url}}"],
+              "path": ["teachers"]
+            },
+            "description": "Returns a list of all teachers, sorted by last name then first name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Teacher by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["teachers", "{{teacher_id}}"]
+            },
+            "description": "Returns a single teacher by UUID. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('teacher_id', res.data.id);",
+                  "  console.log('teacher_id set to:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@school.edu\",\n  \"phone\": \"09171234099\",\n  \"specialization\": \"Mathematics\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/teachers",
+              "host": ["{{base_url}}"],
+              "path": ["teachers"]
+            },
+            "description": "Creates a new teacher. Email must be unique. Returns 409 if email already exists.\n\nAutomatically saves the returned `id` to the `{{teacher_id}}` collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Teacher",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"09179999999\",\n  \"specialization\": \"Applied Mathematics\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["teachers", "{{teacher_id}}"]
+            },
+            "description": "Partially updates a teacher (all fields optional). Returns 404 if not found. Returns 409 if new email already exists on a different teacher."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Teacher",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["teachers", "{{teacher_id}}"]
+            },
+            "description": "Deletes a teacher by UUID. Returns 204 No Content on success. Classes with this teacher as homeroom will have `homeroom_teacher_id` set to NULL."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Teacher's Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}/subjects",
+              "host": ["{{base_url}}"],
+              "path": ["teachers", "{{teacher_id}}", "subjects"]
+            },
+            "description": "Returns all subjects assigned to the teacher. Returns 404 if teacher not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Teacher's Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}/classes",
+              "host": ["{{base_url}}"],
+              "path": ["teachers", "{{teacher_id}}", "classes"]
+            },
+            "description": "Returns all classes where this teacher is the homeroom teacher. Returns 404 if teacher not found."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        {
+          "name": "Get All Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects",
+              "host": ["{{base_url}}"],
+              "path": ["subjects"]
+            },
+            "description": "Returns all subjects with their assigned teacher, sorted by name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/{{subject_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", "{{subject_id}}"]
+            },
+            "description": "Returns a single subject with its assigned teacher. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Subject",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('subject_id', res.data.id);",
+                  "  console.log('subject_id set to:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Physical Education\",\n  \"code\": \"PE101\",\n  \"description\": \"Sports and physical fitness.\",\n  \"teacherId\": \"{{teacher_id}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects",
+              "host": ["{{base_url}}"],
+              "path": ["subjects"]
+            },
+            "description": "Creates a new subject. `code` must be unique. `teacherId` is optional — must be an existing teacher UUID if provided.\n\nAutomatically saves the returned `id` to the `{{subject_id}}` collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description for this subject.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/{{subject_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", "{{subject_id}}"]
+            },
+            "description": "Partially updates a subject. Returns 409 if code already exists on another subject."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Subject",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/{{subject_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", "{{subject_id}}"]
+            },
+            "description": "Deletes a subject. Grades referencing this subject will be cascade deleted."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students",
+              "host": ["{{base_url}}"],
+              "path": ["students"]
+            },
+            "description": "Returns all students sorted by last name then first name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["students", "{{student_id}}"]
+            },
+            "description": "Returns a single student by UUID. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('student_id', res.data.id);",
+                  "  console.log('student_id set to:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Maria\",\n  \"lastName\": \"Santos\",\n  \"email\": \"maria.santos@student.edu\",\n  \"dateOfBirth\": \"2010-05-20\",\n  \"enrollmentDate\": \"2024-06-01\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/students",
+              "host": ["{{base_url}}"],
+              "path": ["students"]
+            },
+            "description": "Creates a new student. Email must be unique. Dates are in YYYY-MM-DD format.\n\nAutomatically saves the returned `id` to the `{{student_id}}` collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enrollmentDate\": \"2024-07-15\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["students", "{{student_id}}"]
+            },
+            "description": "Partially updates a student. Returns 409 if new email already exists on a different student."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["students", "{{student_id}}"]
+            },
+            "description": "Deletes a student. Their grades will be cascade deleted. Class enrollments are removed."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student's Grades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/grades",
+              "host": ["{{base_url}}"],
+              "path": ["students", "{{student_id}}", "grades"]
+            },
+            "description": "Returns all grades for a student, with subject and class details included."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student's Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/classes",
+              "host": ["{{base_url}}"],
+              "path": ["students", "{{student_id}}", "classes"]
+            },
+            "description": "Returns all classes the student is currently enrolled in, with homeroom teacher details."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Classes",
+      "item": [
+        {
+          "name": "Get All Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes",
+              "host": ["{{base_url}}"],
+              "path": ["classes"]
+            },
+            "description": "Returns all classes with their homeroom teacher, sorted by name."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}"]
+            },
+            "description": "Returns a single class with homeroom teacher and enrolled students. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Class",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('class_id', res.data.id);",
+                  "  console.log('class_id set to:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grade 8 - Section A\",\n  \"gradeLevel\": \"Grade 8\",\n  \"academicYear\": \"2024-2025\",\n  \"homeroomTeacherId\": \"{{teacher_id}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes",
+              "host": ["{{base_url}}"],
+              "path": ["classes"]
+            },
+            "description": "Creates a new class. `homeroomTeacherId` is optional — must be an existing teacher UUID if provided.\n\nAutomatically saves the returned `id` to the `{{class_id}}` collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Class",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grade 8 - Section A (Updated)\",\n  \"homeroomTeacherId\": \"{{teacher_id}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}"]
+            },
+            "description": "Partially updates a class. Returns 404 if class or referenced teacher not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Class",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}"]
+            },
+            "description": "Deletes a class. Grades referencing this class will be cascade deleted. Student enrollments are removed."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Students in Class",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}/students",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}", "students"]
+            },
+            "description": "Returns all students currently enrolled in the class."
+          },
+          "response": []
+        },
+        {
+          "name": "Enroll Student in Class",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{student_id}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}/enroll",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}", "enroll"]
+            },
+            "description": "Enrolls a student in a class. Returns 404 if either not found. Returns 409 if student is already enrolled in this class."
+          },
+          "response": []
+        },
+        {
+          "name": "Unenroll Student from Class",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}/unenroll/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["classes", "{{class_id}}", "unenroll", "{{student_id}}"]
+            },
+            "description": "Removes a student from a class. Returns 400 if student is not enrolled."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Grades",
+      "item": [
+        {
+          "name": "Get All Grades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades",
+              "host": ["{{base_url}}"],
+              "path": ["grades"]
+            },
+            "description": "Returns all grades with student, subject, and class details. Sorted by createdAt DESC."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Grade by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/{{grade_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "{{grade_id}}"]
+            },
+            "description": "Returns a single grade record with full student, subject, and class relations."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Grade Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/report/student/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "report", "student", "{{student_id}}"]
+            },
+            "description": "Returns a grade report for a student grouped by subject, including the average score per subject. Returns 404 if student not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Grade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('grade_id', res.data.id);",
+                  "  console.log('grade_id set to:', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 88.5,\n  \"semester\": \"FIRST\",\n  \"academicYear\": \"2024-2025\",\n  \"studentId\": \"{{student_id}}\",\n  \"subjectId\": \"{{subject_id}}\",\n  \"classId\": \"{{class_id}}\",\n  \"remarks\": \"Good performance\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/grades",
+              "host": ["{{base_url}}"],
+              "path": ["grades"]
+            },
+            "description": "Creates a grade record. `semester` must be `FIRST` or `SECOND`. Score is 0–100 with up to 2 decimal places. `letterGrade` is computed automatically.\n\nAll three FK IDs (student, subject, class) must exist — returns 404 for any that don't.\n\nAutomatically saves the returned `id` to the `{{grade_id}}` collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Grade",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 92.0,\n  \"remarks\": \"Excellent improvement\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/grades/{{grade_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "{{grade_id}}"]
+            },
+            "description": "Partially updates a grade. `letterGrade` is recomputed automatically from the new score. Returns 404 if grade not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Grade",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/{{grade_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "{{grade_id}}"]
+            },
+            "description": "Permanently deletes a grade record. Returns 204 No Content on success."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
